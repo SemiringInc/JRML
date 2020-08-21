@@ -1,0 +1,53 @@
+/*
+ * Example JSON-NLP to Triple Mapper
+ *
+ * (C) 2020 by Semiring Inc., Damir Cavar
+ *
+ * This is a random test implementation of Macro definition and Rules in
+ * the JRML format.
+ *
+ * The goal of this language is to use a JSON-NLP output 
+ */
+
+
+// Macros renders: Verb3rdSg.subjectPhrase[num="sg",pers=3]
+Macro Verb3rdSg: subjectPhrase[num="sg"] [pers=3] ;
+
+
+// comment
+Rule myRule:
+    X[dep="nsubj",pos="NNP",type="PERSON"]
+    Y[pos="VBZ"]  // test
+    Z[dep="dobj"] // Z is the object
+    --> // this can be -> or => of any length
+    (X, Y, Z) ;
+
+
+Rule yourRule:  // another line comment
+    X [ dep="nsubj",
+        pos="NNP",
+        type="PERSON",
+        num = 2 ]
+    Y [pos="VBZ"]
+    Z [dep="dobj"] -->
+    (X, Y, Z) ;
+
+
+Rule yourRule: X[dep="nsubj"] Y Z -> ( (X, Y, Z) ) ;
+
+Rule yourRule : X[ dep = "nsubj" ] Y Z -> ( (X, Y[directional=true], Z), (X, "hasColor", Z) ) ;
+
+Rule yourRule :
+    X.subject X[num="pl"] X[sent="pos"] Y Z ->
+    ( (X, Y[directional=true], Z), (Z, Y, X) ) ;
+
+Rule yourRule : X.subjectPhrase Y Z -> ( (X, Y[directional=true], Z), (X, Y, Z) ) ;
+
+Rule yourRule : X.subjectCompound Y Z -> ( (X, Y[directional=true], Z), (X, Y, Z) ) ;
+
+Rule yourRule[domain="med"] : X[ num ] Y Z -> ( (X, Y[directional], Z), (X.lemma, Y.text, Z.pos) ) ;
+
+Rule yourRule[domain="gen"] :
+    X[ num ] X[lemma="be"] Z ->
+    ( (X, Y[directional], Z), (X.lemma, Y.text, Z.pos) ) ;
+
